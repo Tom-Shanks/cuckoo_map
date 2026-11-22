@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
@@ -12,15 +12,21 @@
         <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
+        body {
+            margin: 0;
+        }
         #map {
-            width: 777px;
-            height: 802px;
+            box-sizing: border-box;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            padding-right: 0;
         }
         </style>
-        <title></title>
+        <title>Western Yellow-billed Cuckoo Proposed Habitat · 2020 GIS study</title>
     </head>
     <body>
-        <div id="map">
+        <div id="map" role="region" aria-label="Western Yellow-billed Cuckoo Proposed Habitat · 2020 GIS study">
         </div>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
@@ -40,7 +46,7 @@
             zoomControl:true, maxZoom:28, minZoom:1
         }).fitBounds([[32.60781965427474,-111.16339619724963],[33.41193485494002,-110.38440959660514]]);
         var hash = new L.Hash(map);
-        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>');
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>');
         L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
         var measureControl = new L.Control.Measure({
             position: 'topleft',
@@ -57,9 +63,9 @@
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
         }
-        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        var layer_OSMStandard_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             opacity: 1.0,
-            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>',
         });
         layer_OSMStandard_0;
         map.addLayer(layer_OSMStandard_0);
@@ -157,11 +163,11 @@
         document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
         .title += 'Search for a place';
         var baseMaps = {};
-        L.control.layers(baseMaps,{'<img src="legend/PCH_COCCYZUS_AMERICANUS_20200227_1.png" /> PCH_COCCYZUS_AMERICANUS_20200227': layer_PCH_COCCYZUS_AMERICANUS_20200227_1,"OSM Standard": layer_OSMStandard_0,}).addTo(map);
+        L.control.layers(baseMaps,{'<img src="legend/PCH_COCCYZUS_AMERICANUS_20200227_1.png" /> Proposed habitat units (2020)': layer_PCH_COCCYZUS_AMERICANUS_20200227_1,"OSM Standard": layer_OSMStandard_0,},{collapsed: !L.Browser.touch}).addTo(map);
         map.on("zoomend", function(){
 
                 if (map.hasLayer(layer_PCH_COCCYZUS_AMERICANUS_20200227_1)) {
-                    if (map.getZoom() <= 6 && map.getZoom() >= 12) {
+                    if (map.getZoom() >= 6 && map.getZoom() <= 12) {
                         layer_PCH_COCCYZUS_AMERICANUS_20200227_1.eachLayer(function (layer) {
                             layer.openTooltip();
                         });
@@ -187,7 +193,7 @@
               i++;
         });
                 if (map.hasLayer(layer_PCH_COCCYZUS_AMERICANUS_20200227_1)) {
-                    if (map.getZoom() <= 6 && map.getZoom() >= 12) {
+                    if (map.getZoom() >= 6 && map.getZoom() <= 12) {
                         layer_PCH_COCCYZUS_AMERICANUS_20200227_1.eachLayer(function (layer) {
                             layer.openTooltip();
                         });
@@ -204,16 +210,13 @@
             propertyName: 'UNITNAME'}));
         document.getElementsByClassName('search-button')[0].className +=
          ' fa fa-binoculars';
-        resetLabels([layer_PCHCOCCYZUSAMERICANUS20200227_1]);
-        map.on("zoomend", function(){
-            resetLabels([layer_PCHCOCCYZUSAMERICANUS20200227_1]);
-        });
-        map.on("layeradd", function(){
-            resetLabels([layer_PCHCOCCYZUSAMERICANUS20200227_1]);
-        });
-        map.on("layerremove", function(){
-            resetLabels([layer_PCHCOCCYZUSAMERICANUS20200227_1]);
-        });
+        function refreshHabitatLabels() {
+            resetLabels(map.hasLayer(layer_PCH_COCCYZUS_AMERICANUS_20200227_1)
+                ? [layer_PCH_COCCYZUS_AMERICANUS_20200227_1]
+                : []);
+        }
+        refreshHabitatLabels();
+        map.on("zoomend overlayadd overlayremove", refreshHabitatLabels);
         </script>
     </body>
 </html>
